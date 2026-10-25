@@ -346,8 +346,6 @@
             font-size: clamp(1.05rem, 2.4vw, 1.3rem);
         }
 
-        .final-stars { text-align: center; font-size: clamp(2rem, 8vw, 3.5rem); letter-spacing: 6px; }
-
         .final-stats { display: flex; justify-content: center; gap: 12px; }
 
         .final-stat {
@@ -482,7 +480,6 @@
             <div class="mascot" aria-hidden="true">🏆</div>
             <h1>¡Genial!</h1>
             <div class="summary-results">
-                <p id="stars-display" class="final-stars" aria-label="Estrellas conseguidas">⭐⭐⭐</p>
                 <div class="final-stats">
                     <span class="final-stat" title="Tiempo"><span aria-hidden="true">⏱️</span><span class="sr-only">Tiempo:</span> <span id="final-time">0:00</span></span>
                     <span class="final-stat" title="Fallos"><span aria-hidden="true">💔</span><span class="sr-only">Fallos:</span> <span id="final-mistakes">0</span></span>
@@ -535,7 +532,6 @@
         const timerDisplay = document.getElementById('timer-display');
         const finalTime = document.getElementById('final-time');
         const finalMistakes = document.getElementById('final-mistakes');
-        const starsDisplay = document.getElementById('stars-display');
         const progressBar = document.getElementById('progress-bar');
         const progressTrack = progressBar.parentElement;
         const confettiLayer = document.getElementById('confetti-layer');
@@ -749,9 +745,6 @@
             const totalSeconds = (Date.now() - gameStartTime) / 1000;
             finalTime.textContent = formatTime(totalSeconds);
             finalMistakes.textContent = mistakes;
-            const stars = mistakes === 0 ? 3 : mistakes <= 3 ? 2 : 1;
-            starsDisplay.textContent = '⭐'.repeat(stars);
-            starsDisplay.setAttribute('aria-label', `${stars} ${stars === 1 ? 'estrella' : 'estrellas'} conseguidas`);
             celebrate(36);
 
             // Ordenar operaciones por tiempo total dedicado descendente
