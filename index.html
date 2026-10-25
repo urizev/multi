@@ -208,14 +208,25 @@
             color: #615d7d;
             background: #f5f2ff;
             box-shadow: 0 5px 0 #e5defe;
-            font-size: clamp(0.86rem, 2.4vw, 1.15rem);
+            font-size: clamp(1.15rem, 4vw, 1.6rem);
         }
 
         .stat-item {
+            flex: 1;
             padding: 5px 9px;
             border-radius: 16px;
             background: #fff;
             font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
         }
 
         .stat-value { color: var(--primary-color); font-weight: 900; }
@@ -337,6 +348,17 @@
 
         .final-stars { text-align: center; font-size: clamp(2rem, 8vw, 3.5rem); letter-spacing: 6px; }
 
+        .final-stats { display: flex; justify-content: center; gap: 12px; }
+
+        .final-stat {
+            padding: 8px 18px;
+            border-radius: 18px;
+            color: #39345d;
+            background: #fffef8;
+            font-size: clamp(1.3rem, 4.5vw, 1.8rem);
+            font-weight: 900;
+        }
+
         .slowest-container { margin-top: 18px; padding-top: 14px; border-top: 2px dashed #e6c65f; }
 
         .slowest-container h3 {
@@ -438,9 +460,9 @@
         <!-- Pantalla de Juego -->
         <div id="game-screen" class="screen">
             <div class="stats">
-                <div class="stat-item">⭐ Por hacer: <span id="remaining-count" class="stat-value">0</span></div>
-                <div class="stat-item">💔 Fallos: <span id="mistakes-count" class="stat-value error">0</span></div>
-                <div class="stat-item">⏱️ <span id="timer-display" class="stat-value">0:00</span></div>
+                <div class="stat-item" title="Por hacer"><span aria-hidden="true">🎯</span><span class="sr-only">Por hacer:</span> <span id="remaining-count" class="stat-value">0</span></div>
+                <div class="stat-item" title="Fallos"><span aria-hidden="true">💔</span><span class="sr-only">Fallos:</span> <span id="mistakes-count" class="stat-value error">0</span></div>
+                <div class="stat-item" title="Tiempo"><span aria-hidden="true">⏱️</span><span class="sr-only">Tiempo:</span> <span id="timer-display" class="stat-value">0:00</span></div>
             </div>
             <div class="progress-track" role="progressbar" aria-label="Progreso del juego" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <div id="progress-bar" class="progress-bar"></div>
@@ -458,14 +480,15 @@
         <!-- Pantalla Final -->
         <div id="finish-screen" class="screen">
             <div class="mascot" aria-hidden="true">🏆</div>
-            <h1>¡Nivel completado!</h1>
-            <p class="subtitle">¡Lo has hecho genial! Mira tus estrellas:</p>
+            <h1>¡Genial!</h1>
             <div class="summary-results">
                 <p id="stars-display" class="final-stars" aria-label="Estrellas conseguidas">⭐⭐⭐</p>
-                <p>⏱ <strong>Tiempo total:</strong> <span id="final-time">0:00</span></p>
-                <p>💔 <strong>Total de fallos:</strong> <span id="final-mistakes">0</span></p>
+                <div class="final-stats">
+                    <span class="final-stat" title="Tiempo"><span aria-hidden="true">⏱️</span><span class="sr-only">Tiempo:</span> <span id="final-time">0:00</span></span>
+                    <span class="final-stat" title="Fallos"><span aria-hidden="true">💔</span><span class="sr-only">Fallos:</span> <span id="final-mistakes">0</span></span>
+                </div>
                 <div id="slowest-container" class="slowest-container">
-                    <h3>🧠 ¡Estas operaciones fueron las más difíciles!</h3>
+                    <h3>🐢 Las más difíciles</h3>
                     <ul id="slowest-list" class="slowest-list"></ul>
                 </div>
             </div>
@@ -742,7 +765,7 @@
                 slowestContainer.style.display = 'block';
                 topSlowest.forEach(op => {
                     const li = document.createElement('li');
-                    const attemptsText = op.attempts > 1 ? ` (${op.attempts} intentos)` : '';
+                    const attemptsText = op.attempts > 1 ? ` 🔁${op.attempts}` : '';
                     li.innerHTML = `
                         <span class="op">${op.a} x ${op.b}${attemptsText}</span>
                         <span class="op-time">${op.totalTime.toFixed(1)} s</span>
