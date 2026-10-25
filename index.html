@@ -2,114 +2,150 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Aprende las Tablas de Multiplicar</title>
     <style>
         :root {
             --primary-color: #4a90e2;
+            --primary-hover: #357abd;
             --secondary-color: #f5a623;
-            --success-color: #7ed321;
-            --error-color: #d0021b;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
             --bg-color: #f0f4f8;
-            --text-color: #333;
+            --text-color: #2c3e50;
             --card-bg: #ffffff;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
+            -webkit-font-smoothing: antialiased;
+            touch-action: manipulation;
+        }
+
+        body {
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: stretch;
             min-height: 100vh;
-            margin: 0;
+            min-height: 100dvh;
         }
 
         .container {
             background-color: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 500px;
+            padding: clamp(1rem, 3.5vw, 2.5rem);
+            width: 100%;
+            max-width: 900px;
+            min-height: 100vh;
+            min-height: 100dvh;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.06);
+            overflow-y: auto;
         }
 
-        h1 { color: var(--primary-color); }
+        @media (max-width: 900px) {
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: clamp(0.75rem, 3vw, 1.75rem);
+            }
+        }
 
-        .screen { display: none; }
-        .screen.active { display: block; }
+        h1 {
+            color: var(--primary-color);
+            font-size: clamp(2rem, 5.5vw, 3.2rem);
+            margin: 0 0 10px 0;
+            font-weight: 800;
+        }
+
+        p.subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+            color: #64748b;
+            margin: 0 0 20px 0;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 650px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(12px, 2.5vh, 24px);
+            margin: auto 0;
+        }
+
+        .screen.active {
+            display: flex;
+        }
 
         /* Pantalla de Selección */
         .grid-tables {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin: 20px 0;
+            gap: clamp(8px, 2vw, 16px);
+            width: 100%;
+            margin: 10px 0 20px 0;
         }
 
         .table-btn {
-            padding: 10px;
-            border: 2px solid var(--primary-color);
+            aspect-ratio: 1 / 1;
+            min-height: clamp(52px, 9vh, 85px);
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            border: 3px solid var(--primary-color);
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .table-btn:hover {
+            background-color: #edf5fd;
+        }
+
+        .table-btn:active {
+            transform: scale(0.95);
         }
 
         .table-btn.selected {
             background-color: var(--primary-color);
             color: white;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.35);
         }
 
         /* Pantalla de Juego */
-        .question {
-            font-size: 3rem;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-
-        input[type="number"] {
-            font-size: 2rem;
-            width: 100px;
-            text-align: center;
-            padding: 5px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .feedback {
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 8px;
-            min-height: 40px;
-            font-weight: bold;
-        }
-
-        .feedback.correct {
-            background-color: #e6f7e0;
-            color: var(--success-color);
-        }
-
-        .feedback.wrong {
-            background-color: #fbeae6;
-            color: var(--error-color);
-        }
-
         .stats {
-            margin-top: 15px;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-            color: #555;
+            width: 100%;
+            font-size: clamp(1rem, 2.4vw, 1.25rem);
+            color: #475569;
             display: flex;
             justify-content: space-between;
             background: #f8fafc;
-            padding: 8px 12px;
-            border-radius: 8px;
+            padding: clamp(10px, 1.8vh, 16px) clamp(14px, 3vw, 24px);
+            border-radius: 12px;
             border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
         .stat-item {
@@ -125,57 +161,137 @@
             color: var(--error-color);
         }
 
+        .question {
+            font-size: clamp(3.8rem, 13vw, 6.8rem);
+            margin: clamp(10px, 3vh, 25px) 0;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        #answer-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            font-size: clamp(2.6rem, 8vw, 4.2rem);
+            width: clamp(140px, 38vw, 240px);
+            text-align: center;
+            padding: clamp(8px, 1.5vh, 14px);
+            border: 3px solid #cbd5e1;
+            border-radius: 16px;
+            margin-bottom: clamp(15px, 2.5vh, 25px);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+            color: #1e293b;
+            background: #f8fafc;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--primary-color);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.2);
+        }
+
+        /* Quitar flechas del input number para mayor limpieza visual */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .feedback {
+            width: 100%;
+            margin: clamp(8px, 1.5vh, 16px) 0;
+            padding: clamp(12px, 1.8vh, 16px);
+            border-radius: 12px;
+            min-height: clamp(52px, 7vh, 65px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+            transition: all 0.2s ease;
+        }
+
+        .feedback.correct {
+            background-color: #eafaf1;
+            color: var(--success-color);
+            border: 1px solid #c7f0db;
+        }
+
+        .feedback.wrong {
+            background-color: #fdf0ed;
+            color: var(--error-color);
+            border: 1px solid #fadbd8;
+        }
+
+        /* Pantalla Final */
         .summary-results {
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
+            border-radius: 14px;
+            padding: clamp(16px, 2.5vh, 26px);
+            margin: clamp(10px, 2vh, 20px) 0;
             text-align: left;
+            width: 100%;
         }
 
         .summary-results p {
-            margin: 8px 0;
-            font-size: 1.05rem;
+            margin: 10px 0;
+            font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+            color: #334155;
         }
 
         .slowest-container {
-            margin-top: 15px;
+            margin-top: 18px;
             border-top: 1px solid #e2e8f0;
-            padding-top: 10px;
+            padding-top: 14px;
         }
 
         .slowest-container h3 {
-            margin: 10px 0 8px 0;
-            font-size: 1rem;
-            color: #444;
+            margin: 0 0 12px 0;
+            font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+            color: #1e293b;
+            font-weight: 700;
         }
 
         .slowest-list {
             list-style: none;
             padding: 0;
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .slowest-list li {
             display: flex;
             justify-content: space-between;
-            padding: 6px 10px;
+            align-items: center;
+            padding: clamp(8px, 1.4vh, 12px) clamp(12px, 2.5vw, 16px);
             background: #ffffff;
-            border-radius: 6px;
-            margin-bottom: 6px;
-            border: 1px solid #edf2f7;
-            font-size: 0.95rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: clamp(1rem, 2.2vw, 1.15rem);
         }
 
         .slowest-list li .op {
             font-weight: bold;
-            color: #333;
+            color: #1e293b;
         }
 
         .slowest-list li .op-time {
-            color: #e67e22;
-            font-weight: 600;
+            color: #d97706;
+            font-weight: 700;
         }
 
         /* Botones Generales */
@@ -183,23 +299,36 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 1.1rem;
-            border-radius: 8px;
+            padding: clamp(14px, 2vh, 18px) clamp(24px, 4vw, 36px);
+            font-size: clamp(1.15rem, 2.6vw, 1.4rem);
+            font-weight: bold;
+            border-radius: 12px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            max-width: 380px;
+            margin: 6px auto;
+            box-shadow: 0 4px 14px rgba(74, 144, 226, 0.3);
+            -webkit-tap-highlight-color: transparent;
         }
 
-        button.main-btn:hover {
-            background-color: #357abd;
+        button.main-btn:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            box-shadow: 0 6px 18px rgba(74, 144, 226, 0.4);
+            transform: translateY(-1px);
+        }
+
+        button.main-btn:active:not(:disabled) {
+            transform: translateY(1px);
         }
 
         button.main-btn:disabled {
-            background-color: #ccc;
+            background-color: #cbd5e1;
+            box-shadow: none;
             cursor: not-allowed;
         }
 
-        .hidden { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -208,7 +337,7 @@
         <!-- Pantalla Inicial -->
         <div id="setup-screen" class="screen active">
             <h1>Tablas de Multiplicar</h1>
-            <p>Selecciona las tablas que quieres practicar:</p>
+            <p class="subtitle">Selecciona las tablas que quieres practicar:</p>
             <div class="grid-tables" id="tables-container">
                 <!-- Botones del 1 al 10 generados por JS -->
             </div>
@@ -224,7 +353,7 @@
             </div>
             <div class="question" id="question-text">7 x 8</div>
             <form id="answer-form">
-                <input type="number" id="answer-input" placeholder="?" autocomplete="off" required>
+                <input type="number" id="answer-input" placeholder="?" autocomplete="off" inputmode="numeric" pattern="[0-9]*" required>
                 <br>
                 <button type="submit" class="main-btn">Responder</button>
             </form>
@@ -235,7 +364,7 @@
         <!-- Pantalla Final -->
         <div id="finish-screen" class="screen">
             <h1>¡Felicidades!</h1>
-            <p>Has completado todas las tablas seleccionadas con éxito.</p>
+            <p class="subtitle">Has completado todas las tablas seleccionadas con éxito.</p>
             <div class="summary-results">
                 <p>⏱ <strong>Tiempo total:</strong> <span id="final-time">0:00</span></p>
                 <p>❌ <strong>Total de fallos:</strong> <span id="final-mistakes">0</span></p>
