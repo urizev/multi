@@ -136,6 +136,8 @@
         }
 
         .table-btn {
+            --shade: #3296c9;
+            position: relative;
             width: 100%;
             min-width: 0;
             aspect-ratio: 1 / 1;
@@ -147,7 +149,7 @@
             border-radius: 24px;
             color: #fff;
             background: #53b9ee;
-            box-shadow: 0 6px 0 #3296c9, 0 9px 14px rgba(66, 127, 167, 0.16);
+            box-shadow: 0 6px 0 var(--shade), 0 9px 14px rgba(66, 127, 167, 0.16);
             cursor: pointer;
             font: inherit;
             font-size: clamp(1.4rem, 4vw, 2.2rem);
@@ -157,19 +159,39 @@
             transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
         }
 
-        .table-btn:nth-child(5n + 1) { background: #ff718d; box-shadow: 0 6px 0 #d94d6b, 0 9px 14px rgba(66, 127, 167, 0.16); }
-        .table-btn:nth-child(5n + 2) { background: #ffae42; box-shadow: 0 6px 0 #dc8424, 0 9px 14px rgba(66, 127, 167, 0.16); }
-        .table-btn:nth-child(5n + 3) { background: #8c72ed; box-shadow: 0 6px 0 #644dc4, 0 9px 14px rgba(66, 127, 167, 0.16); }
-        .table-btn:nth-child(5n + 4) { background: #45c99c; box-shadow: 0 6px 0 #20a578, 0 9px 14px rgba(66, 127, 167, 0.16); }
+        .table-btn:nth-child(5n + 1) { --shade: #d94d6b; background: #ff718d; }
+        .table-btn:nth-child(5n + 2) { --shade: #dc8424; background: #ffae42; }
+        .table-btn:nth-child(5n + 3) { --shade: #644dc4; background: #8c72ed; }
+        .table-btn:nth-child(5n + 4) { --shade: #20a578; background: #45c99c; }
 
         .table-btn:hover { filter: brightness(1.07); transform: translateY(-3px) rotate(-2deg); }
         .table-btn:active { transform: translateY(3px) scale(0.97); }
         .table-btn.selected {
-            outline: 4px solid #ffe578;
-            outline-offset: 2px;
-            filter: saturate(1.15) brightness(1.08);
-            transform: translateY(-3px) scale(1.04);
+            border-color: #fff;
+            filter: saturate(1.2) brightness(1.05);
+            transform: translateY(-3px);
         }
+
+        .table-btn.selected::after {
+            content: '✓';
+            position: absolute;
+            top: -7px;
+            right: -7px;
+            display: grid;
+            width: clamp(22px, 5.5vw, 32px);
+            aspect-ratio: 1;
+            place-items: center;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            color: #fff;
+            background: var(--success-color);
+            box-shadow: 0 3px 0 #0d7a50;
+            font-size: clamp(0.8rem, 2.6vw, 1.1rem);
+            line-height: 1;
+            animation: check-pop 0.3s cubic-bezier(0.2, 1.4, 0.5, 1) both;
+        }
+
+        .table-btn:focus-visible { outline: 3px dashed var(--primary-color); outline-offset: 5px; }
 
         .stats {
             display: flex;
@@ -366,6 +388,7 @@
 
         .hidden { display: none !important; }
 
+        @keyframes check-pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
         @keyframes mascot-float { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-7px) rotate(3deg); } }
         @keyframes question-pop { 0% { opacity: 0; transform: scale(0.7) rotate(-5deg); } 70% { transform: scale(1.08) rotate(2deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
         @keyframes happy-bounce { 0% { transform: scale(0.9); } 55% { transform: scale(1.06); } 100% { transform: scale(1); } }
@@ -493,6 +516,7 @@
             const btn = document.createElement('button');
             btn.textContent = i;
             btn.classList.add('table-btn');
+            btn.setAttribute('aria-pressed', 'false');
             btn.onclick = () => toggleTable(i, btn);
             tablesContainer.appendChild(btn);
         }
@@ -501,9 +525,11 @@
             if (selectedTables.has(num)) {
                 selectedTables.delete(num);
                 btn.classList.remove('selected');
+                btn.setAttribute('aria-pressed', 'false');
             } else {
                 selectedTables.add(num);
                 btn.classList.add('selected');
+                btn.setAttribute('aria-pressed', 'true');
             }
             startBtn.disabled = selectedTables.size === 0;
         }
@@ -774,7 +800,10 @@
                 autoAdvanceTimer = null;
             }
             selectedTables.clear();
-            document.querySelectorAll('.table-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.table-btn').forEach(b => {
+                b.classList.remove('selected');
+                b.setAttribute('aria-pressed', 'false');
+            });
             startBtn.disabled = true;
             showScreen('setup');
         };
