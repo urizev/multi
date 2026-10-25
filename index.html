@@ -6,82 +6,104 @@
     <title>Aprende las Tablas de Multiplicar</title>
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --primary-hover: #357abd;
-            --secondary-color: #f5a623;
-            --success-color: #27ae60;
-            --error-color: #e74c3c;
-            --bg-color: #f0f4f8;
-            --text-color: #2c3e50;
-            --card-bg: #ffffff;
+            --primary-color: #6c4ce3;
+            --primary-hover: #5737cf;
+            --secondary-color: #ffb830;
+            --success-color: #159c67;
+            --error-color: #e54b72;
+            --text-color: #34305b;
+            --card-bg: #fffefb;
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { box-sizing: border-box; }
 
         html, body {
-            height: 100%;
             width: 100%;
+            min-height: 100%;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Trebuchet MS', 'Arial Rounded MT Bold', system-ui, sans-serif;
             color: var(--text-color);
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
         }
 
         body {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: stretch;
             min-height: 100vh;
             min-height: 100dvh;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #a8e6ff 0%, #d4c9ff 48%, #ffe3a8 100%);
+        }
+
+        body::before, body::after {
+            position: fixed;
+            z-index: 0;
+            content: '';
+            pointer-events: none;
+            border-radius: 50%;
+            opacity: 0.55;
+        }
+
+        body::before {
+            width: 210px;
+            height: 210px;
+            top: 5%;
+            left: -70px;
+            background: #ffcf5c;
+            box-shadow: 75px 120px 0 -55px #ff7fa8, 92vw 70vh 0 -45px #82dfbd;
+        }
+
+        body::after {
+            width: 150px;
+            height: 150px;
+            right: -45px;
+            bottom: 8%;
+            background: #ff91bd;
+            box-shadow: -80px -70vh 0 -40px #83d8ff;
         }
 
         .container {
-            background-color: var(--card-bg);
-            padding: clamp(1rem, 3.5vw, 2.5rem);
+            position: relative;
+            z-index: 1;
             width: 100%;
-            max-width: 900px;
             min-height: 100vh;
             min-height: 100dvh;
             margin: 0 auto;
+            padding: clamp(1rem, 3.5vw, 2.5rem);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(0,0,0,0.06);
             overflow-y: auto;
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                box-shadow: none;
-                border-radius: 0;
-                padding: clamp(0.75rem, 3vw, 1.75rem);
-            }
+            text-align: center;
+            background: rgba(255, 254, 251, 0.94);
+            box-shadow: 0 18px 55px rgba(78, 58, 151, 0.18);
         }
 
         h1 {
+            margin: 0 0 8px;
             color: var(--primary-color);
-            font-size: clamp(2rem, 5.5vw, 3.2rem);
-            margin: 0 0 10px 0;
-            font-weight: 800;
+            font-size: clamp(2rem, 5.5vw, 3.4rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            text-shadow: 0 3px 0 #e4dcff;
         }
 
         p.subtitle {
-            font-size: clamp(1.1rem, 2.5vw, 1.45rem);
-            color: #64748b;
-            margin: 0 0 20px 0;
+            margin: 0 0 14px;
+            color: #716d91;
+            font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+            font-weight: 700;
         }
 
         .screen {
             display: none;
             width: 100%;
-            max-width: 650px;
+            max-width: 700px;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -89,291 +111,331 @@
             margin: auto 0;
         }
 
-        .screen.active {
-            display: flex;
+        .screen.active { display: flex; }
+
+        .mascot {
+            display: grid;
+            width: clamp(76px, 13vw, 112px);
+            aspect-ratio: 1;
+            place-items: center;
+            margin-bottom: -8px;
+            border: 5px solid #fff;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffe675, #ffb83e);
+            box-shadow: 0 7px 0 #ef9e2e, 0 12px 22px rgba(180, 117, 24, 0.2);
+            font-size: clamp(2.8rem, 7vw, 4rem);
+            animation: mascot-float 2.8s ease-in-out infinite;
         }
 
-        /* Pantalla de Selección */
         .grid-tables {
             display: grid;
+            width: 100%;
             grid-template-columns: repeat(5, 1fr);
             gap: clamp(8px, 2vw, 16px);
-            width: 100%;
-            margin: 10px 0 20px 0;
+            margin: 4px 0 10px;
         }
 
         .table-btn {
             aspect-ratio: 1 / 1;
             min-height: clamp(52px, 9vh, 85px);
-            font-size: clamp(1.4rem, 4vw, 2.2rem);
-            border: 3px solid var(--primary-color);
-            background: white;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: bold;
-            color: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
+            color: #fff;
+            background: #53b9ee;
+            box-shadow: 0 6px 0 #3296c9, 0 9px 14px rgba(66, 127, 167, 0.16);
+            cursor: pointer;
+            font: inherit;
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            font-weight: 900;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
         }
 
-        .table-btn:hover {
-            background-color: #edf5fd;
-        }
+        .table-btn:nth-child(5n + 1) { background: #ff718d; box-shadow: 0 6px 0 #d94d6b, 0 9px 14px rgba(66, 127, 167, 0.16); }
+        .table-btn:nth-child(5n + 2) { background: #ffae42; box-shadow: 0 6px 0 #dc8424, 0 9px 14px rgba(66, 127, 167, 0.16); }
+        .table-btn:nth-child(5n + 3) { background: #8c72ed; box-shadow: 0 6px 0 #644dc4, 0 9px 14px rgba(66, 127, 167, 0.16); }
+        .table-btn:nth-child(5n + 4) { background: #45c99c; box-shadow: 0 6px 0 #20a578, 0 9px 14px rgba(66, 127, 167, 0.16); }
 
-        .table-btn:active {
-            transform: scale(0.95);
-        }
-
+        .table-btn:hover { filter: brightness(1.07); transform: translateY(-3px) rotate(-2deg); }
+        .table-btn:active { transform: translateY(3px) scale(0.97); }
         .table-btn.selected {
-            background-color: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.35);
+            outline: 4px solid #ffe578;
+            outline-offset: 2px;
+            filter: saturate(1.15) brightness(1.08);
+            transform: translateY(-3px) scale(1.04);
         }
 
-        /* Pantalla de Juego */
         .stats {
-            width: 100%;
-            font-size: clamp(1rem, 2.4vw, 1.25rem);
-            color: #475569;
             display: flex;
+            width: 100%;
             justify-content: space-between;
-            background: #f8fafc;
-            padding: clamp(10px, 1.8vh, 16px) clamp(14px, 3vw, 24px);
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            gap: 8px;
+            padding: clamp(10px, 1.8vh, 16px);
+            border: 2px solid #ece8ff;
+            border-radius: 24px;
+            color: #615d7d;
+            background: #f5f2ff;
+            box-shadow: 0 5px 0 #e5defe;
+            font-size: clamp(0.86rem, 2.4vw, 1.15rem);
         }
 
         .stat-item {
-            font-weight: 500;
+            padding: 5px 9px;
+            border-radius: 16px;
+            background: #fff;
+            font-weight: 800;
         }
 
-        .stat-value {
-            font-weight: bold;
-            color: var(--primary-color);
+        .stat-value { color: var(--primary-color); font-weight: 900; }
+        .stat-value.error { color: var(--error-color); }
+
+        .progress-track {
+            width: 100%;
+            height: 15px;
+            overflow: hidden;
+            border: 2px solid #fff;
+            border-radius: 20px;
+            background: #e9e4fa;
+            box-shadow: inset 0 2px 4px rgba(63, 45, 117, 0.1);
         }
 
-        .stat-value.error {
-            color: var(--error-color);
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #51d5a3, #c3e85a, #ffca59);
+            transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .question {
+            margin: clamp(8px, 2.5vh, 20px) 0;
+            color: #39345d;
             font-size: clamp(3.8rem, 13vw, 6.8rem);
-            margin: clamp(10px, 3vh, 25px) 0;
-            font-weight: 800;
-            color: #1e293b;
-            letter-spacing: -1px;
+            font-weight: 900;
+            letter-spacing: -2px;
             line-height: 1.1;
+            text-shadow: 0 5px 0 #e8e2ff;
         }
 
+        .question.pop { animation: question-pop 0.42s cubic-bezier(0.2, 1.4, 0.5, 1) both; }
+
         #answer-form {
-            width: 100%;
             display: flex;
+            width: 100%;
             flex-direction: column;
             align-items: center;
         }
 
         input[type="number"] {
-            font-size: clamp(2.6rem, 8vw, 4.2rem);
             width: clamp(140px, 38vw, 240px);
-            text-align: center;
-            padding: clamp(8px, 1.5vh, 14px);
-            border: 3px solid #cbd5e1;
-            border-radius: 16px;
             margin-bottom: clamp(15px, 2.5vh, 25px);
+            padding: clamp(8px, 1.5vh, 14px);
+            border: 4px solid #d7ceff;
+            border-radius: 25px;
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-weight: bold;
-            color: #1e293b;
-            background: #f8fafc;
+            color: #39345d;
+            background: #fff;
+            box-shadow: 0 6px 0 #b9aaf7;
+            text-align: center;
+            font: inherit;
+            font-size: clamp(2.6rem, 8vw, 4.2rem);
+            font-weight: 900;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
         }
 
         input[type="number"]:focus {
-            border-color: var(--primary-color);
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.2);
+            border-color: #8c72ed;
+            box-shadow: 0 0 0 5px rgba(140, 114, 237, 0.18), 0 6px 0 #b9aaf7;
+            transform: translateY(-2px);
         }
 
-        /* Quitar flechas del input number para mayor limpieza visual */
         input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
 
         .feedback {
-            width: 100%;
-            margin: clamp(8px, 1.5vh, 16px) 0;
-            padding: clamp(12px, 1.8vh, 16px);
-            border-radius: 12px;
-            min-height: clamp(52px, 7vh, 65px);
             display: flex;
+            width: 100%;
+            min-height: clamp(52px, 7vh, 65px);
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: clamp(1.1rem, 2.5vw, 1.35rem);
-            transition: all 0.2s ease;
+            margin: clamp(8px, 1.5vh, 16px) 0;
+            padding: clamp(12px, 1.8vh, 16px);
+            border: 2px solid transparent;
+            border-radius: 22px;
+            font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+            font-weight: 900;
         }
 
         .feedback.correct {
-            background-color: #eafaf1;
-            color: var(--success-color);
-            border: 1px solid #c7f0db;
+            border-color: #a8efd3;
+            color: #087a50;
+            background: #dcfff0;
+            animation: happy-bounce 0.55s ease both;
         }
 
         .feedback.wrong {
-            background-color: #fdf0ed;
-            color: var(--error-color);
-            border: 1px solid #fadbd8;
+            border-color: #ffc0cf;
+            color: #c8345c;
+            background: #fff0f4;
+            animation: gentle-shake 0.4s ease both;
         }
 
-        /* Pantalla Final */
         .summary-results {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: clamp(16px, 2.5vh, 26px);
-            margin: clamp(10px, 2vh, 20px) 0;
-            text-align: left;
             width: 100%;
+            margin: clamp(8px, 2vh, 18px) 0;
+            padding: clamp(16px, 2.5vh, 26px);
+            border: 3px solid #f6d77a;
+            border-radius: 28px;
+            background: linear-gradient(145deg, #fff9df, #fff1c5);
+            box-shadow: 0 7px 0 #efd47f;
+            text-align: left;
         }
 
         .summary-results p {
             margin: 10px 0;
-            font-size: clamp(1.1rem, 2.4vw, 1.35rem);
-            color: #334155;
+            color: #514b70;
+            font-size: clamp(1.05rem, 2.4vw, 1.3rem);
         }
 
-        .slowest-container {
-            margin-top: 18px;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 14px;
-        }
+        .final-stars { text-align: center; font-size: clamp(2rem, 8vw, 3.5rem); letter-spacing: 6px; }
+
+        .slowest-container { margin-top: 18px; padding-top: 14px; border-top: 2px dashed #e6c65f; }
 
         .slowest-container h3 {
-            margin: 0 0 12px 0;
+            margin: 0 0 12px;
+            color: #514b70;
             font-size: clamp(1.05rem, 2.2vw, 1.25rem);
-            color: #1e293b;
-            font-weight: 700;
+            font-weight: 900;
         }
 
-        .slowest-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .slowest-list { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
 
         .slowest-list li {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             padding: clamp(8px, 1.4vh, 12px) clamp(12px, 2.5vw, 16px);
-            background: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            border: 2px solid #f0e3b5;
+            border-radius: 16px;
+            background: #fffef8;
             font-size: clamp(1rem, 2.2vw, 1.15rem);
         }
 
-        .slowest-list li .op {
-            font-weight: bold;
-            color: #1e293b;
-        }
+        .slowest-list li .op { color: #39345d; font-weight: 900; }
+        .slowest-list li .op-time { color: #c5780c; font-weight: 900; }
 
-        .slowest-list li .op-time {
-            color: #d97706;
-            font-weight: 700;
-        }
-
-        /* Botones Generales */
         button.main-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: clamp(14px, 2vh, 18px) clamp(24px, 4vw, 36px);
-            font-size: clamp(1.15rem, 2.6vw, 1.4rem);
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
             max-width: 380px;
             margin: 6px auto;
-            box-shadow: 0 4px 14px rgba(74, 144, 226, 0.3);
+            padding: clamp(14px, 2vh, 18px) clamp(24px, 4vw, 36px);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            color: #fff;
+            background: var(--primary-color);
+            box-shadow: 0 7px 0 #4931ad, 0 11px 17px rgba(77, 56, 167, 0.2);
+            cursor: pointer;
+            font: inherit;
+            font-size: clamp(1.15rem, 2.6vw, 1.4rem);
+            font-weight: 900;
             -webkit-tap-highlight-color: transparent;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
         }
 
-        button.main-btn:hover:not(:disabled) {
-            background-color: var(--primary-hover);
-            box-shadow: 0 6px 18px rgba(74, 144, 226, 0.4);
-            transform: translateY(-1px);
-        }
+        button.main-btn:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-3px); box-shadow: 0 10px 0 #4931ad, 0 14px 20px rgba(77, 56, 167, 0.2); }
+        button.main-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 3px 0 #4931ad; }
+        button.main-btn:disabled { color: #fff; background: #b8b4ca; box-shadow: 0 6px 0 #9691aa; cursor: not-allowed; }
 
-        button.main-btn:active:not(:disabled) {
-            transform: translateY(1px);
-        }
+        .confetti-layer { position: fixed; z-index: 5; inset: 0; overflow: hidden; pointer-events: none; }
 
-        button.main-btn:disabled {
-            background-color: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
+        .confetti-piece {
+            position: absolute;
+            top: -30px;
+            width: 12px;
+            height: 18px;
+            border-radius: 4px;
+            animation: confetti-fall 1.8s ease-in forwards;
         }
 
         .hidden { display: none !important; }
+
+        @keyframes mascot-float { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-7px) rotate(3deg); } }
+        @keyframes question-pop { 0% { opacity: 0; transform: scale(0.7) rotate(-5deg); } 70% { transform: scale(1.08) rotate(2deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
+        @keyframes happy-bounce { 0% { transform: scale(0.9); } 55% { transform: scale(1.06); } 100% { transform: scale(1); } }
+        @keyframes gentle-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        @keyframes confetti-fall { to { transform: translate3d(var(--drift), 105vh, 0) rotate(720deg); opacity: 0; } }
+
+        @media (min-width: 901px) {
+            .container { max-width: 900px; border-right: 8px solid rgba(255, 255, 255, 0.7); border-left: 8px solid rgba(255, 255, 255, 0.7); }
+        }
+
+        @media (max-width: 520px) {
+            .container { padding: max(0.8rem, env(safe-area-inset-top)) max(0.8rem, env(safe-area-inset-right)) max(0.8rem, env(safe-area-inset-bottom)) max(0.8rem, env(safe-area-inset-left)); }
+            .stats { gap: 4px; padding: 8px 5px; }
+            .stat-item { padding: 5px 4px; }
+            .table-btn { border-radius: 18px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <div id="confetti-layer" class="confetti-layer" aria-hidden="true"></div>
         <!-- Pantalla Inicial -->
         <div id="setup-screen" class="screen active">
-            <h1>Tablas de Multiplicar</h1>
-            <p class="subtitle">Selecciona las tablas que quieres practicar:</p>
+            <div class="mascot" aria-hidden="true">🦊</div>
+            <h1>¡Juguemos con las tablas!</h1>
+            <p class="subtitle">Elige las tablas y prepárate para aprender:</p>
             <div class="grid-tables" id="tables-container">
                 <!-- Botones del 1 al 10 generados por JS -->
             </div>
-            <button id="start-btn" class="main-btn" disabled>¡Empezar Juego!</button>
+            <button id="start-btn" class="main-btn" disabled>🎮 ¡Empezar juego!</button>
         </div>
 
         <!-- Pantalla de Juego -->
         <div id="game-screen" class="screen">
             <div class="stats">
-                <div class="stat-item">Pendientes: <span id="remaining-count" class="stat-value">0</span></div>
-                <div class="stat-item">Fallos: <span id="mistakes-count" class="stat-value error">0</span></div>
-                <div class="stat-item">Tiempo: <span id="timer-display" class="stat-value">0:00</span></div>
+                <div class="stat-item">⭐ Por hacer: <span id="remaining-count" class="stat-value">0</span></div>
+                <div class="stat-item">💔 Fallos: <span id="mistakes-count" class="stat-value error">0</span></div>
+                <div class="stat-item">⏱️ <span id="timer-display" class="stat-value">0:00</span></div>
+            </div>
+            <div class="progress-track" role="progressbar" aria-label="Progreso del juego" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div id="progress-bar" class="progress-bar"></div>
             </div>
             <div class="question" id="question-text">7 x 8</div>
             <form id="answer-form">
                 <input type="number" id="answer-input" placeholder="?" autocomplete="off" inputmode="numeric" pattern="[0-9]*" required>
                 <br>
-                <button type="submit" class="main-btn">Responder</button>
+                <button type="submit" class="main-btn">✨ Responder</button>
             </form>
-            <div id="feedback-area" class="feedback"></div>
-            <button id="next-btn" class="main-btn hidden">Siguiente</button>
+            <div id="feedback-area" class="feedback" role="status" aria-live="polite"></div>
+            <button id="next-btn" class="main-btn hidden">➡️ Siguiente</button>
         </div>
 
         <!-- Pantalla Final -->
         <div id="finish-screen" class="screen">
-            <h1>¡Felicidades!</h1>
-            <p class="subtitle">Has completado todas las tablas seleccionadas con éxito.</p>
+            <div class="mascot" aria-hidden="true">🏆</div>
+            <h1>¡Nivel completado!</h1>
+            <p class="subtitle">¡Lo has hecho genial! Mira tus estrellas:</p>
             <div class="summary-results">
+                <p id="stars-display" class="final-stars" aria-label="Estrellas conseguidas">⭐⭐⭐</p>
                 <p>⏱ <strong>Tiempo total:</strong> <span id="final-time">0:00</span></p>
-                <p>❌ <strong>Total de fallos:</strong> <span id="final-mistakes">0</span></p>
+                <p>💔 <strong>Total de fallos:</strong> <span id="final-mistakes">0</span></p>
                 <div id="slowest-container" class="slowest-container">
-                    <h3>Operaciones que más tiempo han llevado:</h3>
+                    <h3>🧠 ¡Estas operaciones fueron las más difíciles!</h3>
                     <ul id="slowest-list" class="slowest-list"></ul>
                 </div>
             </div>
-            <button id="restart-btn" class="main-btn">Jugar de nuevo</button>
+            <button id="restart-btn" class="main-btn">🔄 Jugar de nuevo</button>
         </div>
     </div>
 
@@ -391,6 +453,14 @@
         let questionStartTime = null;
         let operationStats = {}; // Registro de tiempos y estadísticas por operación
         let autoAdvanceTimer = null;
+        let totalOperations = 0;
+        let completedOperations = new Set();
+        const encouragingMessages = [
+            '¡Estupendo! ¡Eres una estrella! ⭐',
+            '¡Muy bien! ¡Sigue así! 🎉',
+            '¡Respuesta genial! 🚀',
+            '¡Lo has conseguido! ¡Choca esos cinco! 🙌'
+        ];
 
         // Elementos DOM
         const setupScreen = document.getElementById('setup-screen');
@@ -408,6 +478,10 @@
         const timerDisplay = document.getElementById('timer-display');
         const finalTime = document.getElementById('final-time');
         const finalMistakes = document.getElementById('final-mistakes');
+        const starsDisplay = document.getElementById('stars-display');
+        const progressBar = document.getElementById('progress-bar');
+        const progressTrack = progressBar.parentElement;
+        const confettiLayer = document.getElementById('confetti-layer');
         const slowestContainer = document.getElementById('slowest-container');
         const slowestList = document.getElementById('slowest-list');
         const restartBtn = document.getElementById('restart-btn');
@@ -453,6 +527,10 @@
             correctHistory = [];
             mistakes = 0;
             operationStats = {};
+            completedOperations = new Set();
+            totalOperations = selectedTables.size * 10;
+            progressBar.style.width = '0%';
+            progressTrack.setAttribute('aria-valuenow', '0');
 
             if (autoAdvanceTimer) {
                 clearTimeout(autoAdvanceTimer);
@@ -515,6 +593,9 @@
             }
 
             questionText.textContent = `${currentQuestion.a} x ${currentQuestion.b}`;
+            questionText.classList.remove('pop');
+            void questionText.offsetWidth;
+            questionText.classList.add('pop');
             updateRemaining();
             questionStartTime = performance.now();
             answerInput.focus();
@@ -549,7 +630,8 @@
             answerForm.querySelector('button').classList.add('hidden');
 
             if (userAnswer === correctAnswer) {
-                showFeedback(true, "¡Correcto!");
+                showFeedback(true, encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)]);
+                celebrate(14);
                 
                 // Si era una pregunta real (no intercalada) y no estaba en repaso
                 if (!currentQuestion.isIntercalated && !currentQuestion.reviewCount) {
@@ -564,6 +646,9 @@
                         reviewQueue.push(currentQuestion);
                     }
                 }
+                if (!currentQuestion.reviewCount) {
+                    completedOperations.add(opKey);
+                }
 
                 // Avance automático tras acierto para maximizar la fluidez
                 autoAdvanceTimer = setTimeout(() => {
@@ -572,7 +657,8 @@
             } else {
                 mistakes++;
                 mistakesCount.textContent = mistakes;
-                showFeedback(false, `Incorrecto. El resultado era ${correctAnswer}. Lo repasaremos.`);
+                completedOperations.delete(opKey);
+                showFeedback(false, `¡Casi! La respuesta era ${correctAnswer}. ¡Lo intentarás de nuevo! 💪`);
                 
                 // Si falla, se anota para repasar 2 veces
                 // Si ya estaba en repaso, reseteamos a 2 veces (o simplemente aseguramos 2)
@@ -603,6 +689,10 @@
             const totalSeconds = (Date.now() - gameStartTime) / 1000;
             finalTime.textContent = formatTime(totalSeconds);
             finalMistakes.textContent = mistakes;
+            const stars = mistakes === 0 ? 3 : mistakes <= 3 ? 2 : 1;
+            starsDisplay.textContent = '⭐'.repeat(stars);
+            starsDisplay.setAttribute('aria-label', `${stars} ${stars === 1 ? 'estrella' : 'estrellas'} conseguidas`);
+            celebrate(36);
 
             // Ordenar operaciones por tiempo total dedicado descendente
             const sortedOps = Object.values(operationStats).sort((a, b) => b.totalTime - a.totalTime);
@@ -638,6 +728,24 @@
             // Estimación de pendientes: preguntas nuevas + preguntas en repaso (por sus turnos pendientes)
             const count = questionsQueue.length + reviewQueue.reduce((acc, q) => acc + (q.reviewCount || 1), 0);
             remainingCount.textContent = count;
+            const progress = totalOperations ? Math.round(completedOperations.size / totalOperations * 100) : 0;
+            progressBar.style.width = `${progress}%`;
+            progressTrack.setAttribute('aria-valuenow', progress);
+        }
+
+        function celebrate(pieceCount) {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const colors = ['#ff718d', '#ffcb4b', '#45c99c', '#53b9ee', '#8c72ed'];
+            for (let i = 0; i < pieceCount; i++) {
+                const piece = document.createElement('span');
+                piece.className = 'confetti-piece';
+                piece.style.left = `${Math.random() * 100}%`;
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.setProperty('--drift', `${Math.round(Math.random() * 160 - 80)}px`);
+                piece.style.animationDelay = `${Math.random() * 0.35}s`;
+                confettiLayer.appendChild(piece);
+                setTimeout(() => piece.remove(), 2400);
+            }
         }
 
         function showScreen(screenName) {
