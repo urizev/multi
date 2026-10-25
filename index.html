@@ -113,6 +113,12 @@
 
         .screen.active { display: flex; }
 
+        #game-screen {
+            flex: 1;
+            justify-content: flex-start;
+            margin: 0;
+        }
+
         .mascot {
             display: grid;
             width: clamp(76px, 13vw, 112px);
@@ -236,10 +242,15 @@
         .question {
             margin: clamp(8px, 2.5vh, 20px) 0;
             color: #39345d;
-            font-size: clamp(3.8rem, 13vw, 6.8rem);
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(3.8rem, min(20vw, 15vh), 11rem);
             font-weight: 900;
             letter-spacing: -2px;
             line-height: 1.1;
+            white-space: nowrap;
             text-shadow: 0 5px 0 #e8e2ff;
         }
 
