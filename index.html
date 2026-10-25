@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprende las Tablas de Multiplicar</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --success-color: #7ed321;
+            --error-color: #d0021b;
+            --bg-color: #f0f4f8;
+            --text-color: #333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 { color: var(--primary-color); }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* Pantalla de Selección */
+        .grid-tables {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .table-btn {
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .table-btn.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Pantalla de Juego */
+        .question {
+            font-size: 3rem;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            font-size: 2rem;
+            width: 100px;
+            text-align: center;
+            padding: 5px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feedback {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            min-height: 40px;
+            font-weight: bold;
+        }
+
+        .feedback.correct {
+            background-color: #e6f7e0;
+            color: var(--success-color);
+        }
+
+        .feedback.wrong {
+            background-color: #fbeae6;
+            color: var(--error-color);
+        }
+
+        .stats {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-item {
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-value.error {
+            color: var(--error-color);
+        }
+
+        .summary-results {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .summary-results p {
+            margin: 8px 0;
+            font-size: 1.05rem;
+        }
+
+        .slowest-container {
+            margin-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+        }
+
+        .slowest-container h3 {
+            margin: 10px 0 8px 0;
+            font-size: 1rem;
+            color: #444;
+        }
+
+        .slowest-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .slowest-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            background: #ffffff;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            border: 1px solid #edf2f7;
+            font-size: 0.95rem;
+        }
+
+        .slowest-list li .op {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .slowest-list li .op-time {
+            color: #e67e22;
+            font-weight: 600;
+        }
+
+        /* Botones Generales */
+        button.main-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button.main-btn:hover {
+            background-color: #357abd;
+        }
+
+        button.main-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Pantalla Inicial -->
+        <div id="setup-screen" class="screen active">
+            <h1>Tablas de Multiplicar</h1>
+            <p>Selecciona las tablas que quieres practicar:</p>
+            <div class="grid-tables" id="tables-container">
+                <!-- Botones del 1 al 10 generados por JS -->
+            </div>
+            <button id="start-btn" class="main-btn" disabled>¡Empezar Juego!</button>
+        </div>
+
+        <!-- Pantalla de Juego -->
+        <div id="game-screen" class="screen">
+            <div class="stats">
+                <div class="stat-item">Pendientes: <span id="remaining-count" class="stat-value">0</span></div>
+                <div class="stat-item">Fallos: <span id="mistakes-count" class="stat-value error">0</span></div>
+                <div class="stat-item">Tiempo: <span id="timer-display" class="stat-value">0:00</span></div>
+            </div>
+            <div class="question" id="question-text">7 x 8</div>
+            <form id="answer-form">
+                <input type="number" id="answer-input" placeholder="?" autocomplete="off" required>
+                <br>
+                <button type="submit" class="main-btn">Responder</button>
+            </form>
+            <div id="feedback-area" class="feedback"></div>
+            <button id="next-btn" class="main-btn hidden">Siguiente</button>
+        </div>
+
+        <!-- Pantalla Final -->
+        <div id="finish-screen" class="screen">
+            <h1>¡Felicidades!</h1>
+            <p>Has completado todas las tablas seleccionadas con éxito.</p>
+            <div class="summary-results">
+                <p>⏱ <strong>Tiempo total:</strong> <span id="final-time">0:00</span></p>
+                <p>❌ <strong>Total de fallos:</strong> <span id="final-mistakes">0</span></p>
+                <div id="slowest-container" class="slowest-container">
+                    <h3>Operaciones que más tiempo han llevado:</h3>
+                    <ul id="slowest-list" class="slowest-list"></ul>
+                </div>
+            </div>
+            <button id="restart-btn" class="main-btn">Jugar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables de Estado
+        let selectedTables = new Set();
+        let questionsQueue = []; // Cola de preguntas pendientes (primera vez)
+        let reviewQueue = []; // Cola de repasos (errores)
+        let currentQuestion = null;
+        let correctHistory = []; // Para intercalar cuando solo hay errores
+
+        let mistakes = 0;
+        let gameStartTime = null;
+        let timerInterval = null;
+        let questionStartTime = null;
+        let operationStats = {}; // Registro de tiempos y estadísticas por operación
+        let autoAdvanceTimer = null;
+
+        // Elementos DOM
+        const setupScreen = document.getElementById('setup-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const finishScreen = document.getElementById('finish-screen');
+        const tablesContainer = document.getElementById('tables-container');
+        const startBtn = document.getElementById('start-btn');
+        const questionText = document.getElementById('question-text');
+        const answerInput = document.getElementById('answer-input');
+        const answerForm = document.getElementById('answer-form');
+        const feedbackArea = document.getElementById('feedback-area');
+        const nextBtn = document.getElementById('next-btn');
+        const remainingCount = document.getElementById('remaining-count');
+        const mistakesCount = document.getElementById('mistakes-count');
+        const timerDisplay = document.getElementById('timer-display');
+        const finalTime = document.getElementById('final-time');
+        const finalMistakes = document.getElementById('final-mistakes');
+        const slowestContainer = document.getElementById('slowest-container');
+        const slowestList = document.getElementById('slowest-list');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Inicialización de botones de tablas
+        for (let i = 1; i <= 10; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i;
+            btn.classList.add('table-btn');
+            btn.onclick = () => toggleTable(i, btn);
+            tablesContainer.appendChild(btn);
+        }
+
+        function toggleTable(num, btn) {
+            if (selectedTables.has(num)) {
+                selectedTables.delete(num);
+                btn.classList.remove('selected');
+            } else {
+                selectedTables.add(num);
+                btn.classList.add('selected');
+            }
+            startBtn.disabled = selectedTables.size === 0;
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function updateTimer() {
+            if (!gameStartTime) return;
+            const elapsedSec = (Date.now() - gameStartTime) / 1000;
+            timerDisplay.textContent = formatTime(elapsedSec);
+        }
+
+        // Lógica del Juego
+        startBtn.onclick = startGame;
+
+        function startGame() {
+            questionsQueue = [];
+            reviewQueue = [];
+            correctHistory = [];
+            mistakes = 0;
+            operationStats = {};
+
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            // Generar todas las preguntas posibles de las tablas seleccionadas
+            selectedTables.forEach(table => {
+                for (let i = 1; i <= 10; i++) {
+                    questionsQueue.push({ a: table, b: i });
+                }
+            });
+
+            // Barajar preguntas iniciales
+            shuffle(questionsQueue);
+
+            mistakesCount.textContent = '0';
+            timerDisplay.textContent = '0:00';
+            gameStartTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+
+            showScreen('game');
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+
+            feedbackArea.className = 'feedback';
+            feedbackArea.textContent = '';
+            answerInput.value = '';
+            answerInput.disabled = false;
+            answerForm.querySelector('button').classList.remove('hidden');
+            nextBtn.classList.add('hidden');
+            
+            // Decidir qué preguntar
+            if (questionsQueue.length > 0) {
+                // Prioridad a preguntas nuevas si las hay
+                currentQuestion = questionsQueue.shift();
+            } else if (reviewQueue.length > 0) {
+                // Si solo quedan repasos, a veces intercalamos una que ya supo bien (si existe)
+                // para no saturar solo con errores, según el requisito.
+                if (correctHistory.length > 0 && Math.random() > 0.7) {
+                    currentQuestion = correctHistory[Math.floor(Math.random() * correctHistory.length)];
+                    currentQuestion.isIntercalated = true;
+                } else {
+                    currentQuestion = reviewQueue.shift();
+                    currentQuestion.isIntercalated = false;
+                }
+            } else {
+                finishGame();
+                return;
+            }
+
+            questionText.textContent = `${currentQuestion.a} x ${currentQuestion.b}`;
+            updateRemaining();
+            questionStartTime = performance.now();
+            answerInput.focus();
+        }
+
+        answerForm.onsubmit = (e) => {
+            e.preventDefault();
+            if (answerInput.disabled) return;
+
+            const timeSpent = (performance.now() - questionStartTime) / 1000;
+            const opKey = `${currentQuestion.a} x ${currentQuestion.b}`;
+
+            if (!operationStats[opKey]) {
+                operationStats[opKey] = {
+                    a: currentQuestion.a,
+                    b: currentQuestion.b,
+                    totalTime: 0,
+                    attempts: 0,
+                    maxTime: 0
+                };
+            }
+            operationStats[opKey].totalTime += timeSpent;
+            operationStats[opKey].attempts += 1;
+            if (timeSpent > operationStats[opKey].maxTime) {
+                operationStats[opKey].maxTime = timeSpent;
+            }
+
+            const userAnswer = parseInt(answerInput.value, 10);
+            const correctAnswer = currentQuestion.a * currentQuestion.b;
+
+            answerInput.disabled = true;
+            answerForm.querySelector('button').classList.add('hidden');
+
+            if (userAnswer === correctAnswer) {
+                showFeedback(true, "¡Correcto!");
+                
+                // Si era una pregunta real (no intercalada) y no estaba en repaso
+                if (!currentQuestion.isIntercalated && !currentQuestion.reviewCount) {
+                    correctHistory.push({...currentQuestion});
+                }
+                
+                // Si era una pregunta de repaso, descontamos uno
+                if (currentQuestion.reviewCount > 0) {
+                    currentQuestion.reviewCount--;
+                    if (currentQuestion.reviewCount > 0) {
+                        // Aún le falta un repaso, lo metemos al final de la cola de repaso
+                        reviewQueue.push(currentQuestion);
+                    }
+                }
+
+                // Avance automático tras acierto para maximizar la fluidez
+                autoAdvanceTimer = setTimeout(() => {
+                    nextQuestion();
+                }, 1200);
+            } else {
+                mistakes++;
+                mistakesCount.textContent = mistakes;
+                showFeedback(false, `Incorrecto. El resultado era ${correctAnswer}. Lo repasaremos.`);
+                
+                // Si falla, se anota para repasar 2 veces
+                // Si ya estaba en repaso, reseteamos a 2 veces (o simplemente aseguramos 2)
+                currentQuestion.reviewCount = 2;
+                currentQuestion.isIntercalated = false;
+                reviewQueue.push(currentQuestion);
+                
+                // Si falló una que estaba en correctHistory, la quitamos de ahí
+                correctHistory = correctHistory.filter(q => !(q.a === currentQuestion.a && q.b === currentQuestion.b));
+
+                nextBtn.classList.remove('hidden');
+                nextBtn.focus();
+            }
+            
+            updateRemaining();
+        };
+
+        function finishGame() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+
+            const totalSeconds = (Date.now() - gameStartTime) / 1000;
+            finalTime.textContent = formatTime(totalSeconds);
+            finalMistakes.textContent = mistakes;
+
+            // Ordenar operaciones por tiempo total dedicado descendente
+            const sortedOps = Object.values(operationStats).sort((a, b) => b.totalTime - a.totalTime);
+            slowestList.innerHTML = '';
+
+            const topSlowest = sortedOps.slice(0, 5);
+            if (topSlowest.length === 0) {
+                slowestContainer.style.display = 'none';
+            } else {
+                slowestContainer.style.display = 'block';
+                topSlowest.forEach(op => {
+                    const li = document.createElement('li');
+                    const attemptsText = op.attempts > 1 ? ` (${op.attempts} intentos)` : '';
+                    li.innerHTML = `
+                        <span class="op">${op.a} x ${op.b}${attemptsText}</span>
+                        <span class="op-time">${op.totalTime.toFixed(1)} s</span>
+                    `;
+                    slowestList.appendChild(li);
+                });
+            }
+
+            showScreen('finish');
+        }
+
+        nextBtn.onclick = nextQuestion;
+
+        function showFeedback(isCorrect, message) {
+            feedbackArea.textContent = message;
+            feedbackArea.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+        }
+
+        function updateRemaining() {
+            // Estimación de pendientes: preguntas nuevas + preguntas en repaso (por sus turnos pendientes)
+            const count = questionsQueue.length + reviewQueue.reduce((acc, q) => acc + (q.reviewCount || 1), 0);
+            remainingCount.textContent = count;
+        }
+
+        function showScreen(screenName) {
+            [setupScreen, gameScreen, finishScreen].forEach(s => s.classList.remove('active'));
+            if (screenName === 'setup') setupScreen.classList.add('active');
+            if (screenName === 'game') gameScreen.classList.add('active');
+            if (screenName === 'finish') finishScreen.classList.add('active');
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        restartBtn.onclick = () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+            selectedTables.clear();
+            document.querySelectorAll('.table-btn').forEach(b => b.classList.remove('selected'));
+            startBtn.disabled = true;
+            showScreen('setup');
+        };
+
+    </script>
+</body>
+</html>
